@@ -88,12 +88,133 @@ gitskills目录，已经有README.md文件了。
 直到开发完毕后，再一次性合并到原来的分支上，这样，既安全，又不影响别人工作。
 
 
+查看分支：git branch
+创建分支：git branch <name>
+切换分支：git checkout <name>
+创建+切换分支：git checkout -b <name>
+合并某分支到当前分支：git merge <name>
+删除分支：git branch -d <name>
+
+
+如git checkout -b dev == git branch dev + git checkout dev
+git branch命令查看当前分支  *表示当前所存在的分支
+然后就可以在当前的分支做add 和 commit操作。
+然后就可以切回到主分支 git checkout master 
+在把dev分支的工作成果合并到master分支上  git merge dev
+看到合并完成之后就可以放心的删除自己的分支了 git branch -d dev
+删除后可查看分支 git branch 
+之后就和前面的提交类似了。
+
+当遇到在自己分支修改后，可是主分支已经修改了。这样可能合并的时候就会出错。
+就必须首先解决冲突。解决冲突后，再提交，合并完成。
+解决冲突就是把Git合并失败的文件手动编辑为我们希望的内容，再提交。
+（其实没太看懂，但是先这样吧）
+
+
+分支管理策略
+通常，合并分支的时候，git会自动调用fast forward模式。这种模式下，删除分支后，
+会丢掉部分分支信息。如果要强制禁用fast forward模式，git就会在merge时生成一个
+新的commit，这样，从分支历史就可以看出分支信息。实际操作一下：
+$ git checkout -b dev 
+修改文件后提交
+$ git add readme.txt 
+$ git commit -m "add merge"
+再次回到master
+$ git checkout master
+准备合并dev分支，请注意--no-ff参数，表示禁用Fast forward：
+$ git merge --no-ff -m "merge with no-ff" dev
+即可。
+
+在实际开发中，我们应该按照几个基本原则进行分支管理：
+首先，master分支应该是非常稳定的，也就是仅用来发布新版本，平时不能在上面干活；
+那在哪干活呢？干活都在dev分支上，也就是说，dev分支是不稳定的，到某个时候，
+比如1.0版本发布时，再把dev分支合并到master上，在master分支发布1.0版本；
+你和你的小伙伴们每个人都在dev分支上干活，每个人都有自己的分支
+时不时地往dev分支上合并就可以了。
+
+Git分支十分强大，在团队开发中应该充分应用。
+合并分支时，加上--no-ff参数就可以用普通模式合并，
+合并后的历史有分支，能看出来曾经做过合并，
+而fast forward合并就看不出来曾经做过合并。
+
+%%%%%%%%%%%
+后面的多人管理因为还用不到，所以暂时先不看了。把别的都学会了，再来研究这个。
+###########
+
+
+创建标签
+命令git tag <tagname>用于新建一个标签，默认为HEAD，也可以指定一个commit id；
+命令git tag -a <tagname> -m "blablabla..."可以指定标签信息；
+命令git tag可以查看所有标签。
+
+解释1：默认标签是打在最新提交的commit上的。有时候，如果忘了打标签，比如，
+现在已经是周五了，但应该在周一打的标签没有打，怎么办？
+方法是找到历史提交的commit id，然后打上就可以了：
+
+如果标签打错了，也可以删除：
+$ git tag -d v0.1
+Deleted tag 'v0.1' (was f15b0dd)
+因为创建的标签都只存储在本地，不会自动推送到远程。所以，
+打错的标签可以在本地安全删除。
+如果要推送某个标签到远程，使用命令git push origin <tagname>
+
+或者，一次性推送全部尚未推送到远程的本地标签：
+git push origin --tags
+
+如果标签已经推送到远程，要删除远程标签就麻烦一点，先从本地删除：
+git tag -d v0.9
+
+然后，从远程删除。删除命令也是push，但是格式如下：
+$ git push origin :refs/tags/v0.9
+
+
+ 
+  
+
+ 
+操作标签
+阅读: 279155
+如果标签打错了，也可以删除：
+
+$ git tag -d v0.1
+Deleted tag 'v0.1' (was f15b0dd)
+因为创建的标签都只存储在本地，不会自动推送到远程。所以，打错的标签可以在本地安全删除。
+
+如果要推送某个标签到远程，使用命令git push origin <tagname>：
+
+$ git push origin v1.0
+Total 0 (delta 0), reused 0 (delta 0)
+To github.com:michaelliao/learngit.git
+ * [new tag]         v1.0 -> v1.0
+或者，一次性推送全部尚未推送到远程的本地标签：
+
+$ git push origin --tags
+Total 0 (delta 0), reused 0 (delta 0)
+To github.com:michaelliao/learngit.git
+ * [new tag]         v0.9 -> v0.9
+如果标签已经推送到远程，要删除远程标签就麻烦一点，先从本地删除：
+
+$ git tag -d v0.9
+Deleted tag 'v0.9' (was f52c633)
+然后，从远程删除。删除命令也是push，但是格式如下：
+
+$ git push origin :refs/tags/v0.9
+To github.com:michaelliao/learngit.git
+ - [deleted]         v0.9
+要看看是否真的从远程库删除了标签，可以登陆GitHub查看。
 
 
 
+小结
+命令git push origin <tagname>可以推送一个本地标签；
+命令git push origin --tags可以推送全部未推送过的本地标签；
+命令git tag -d <tagname>可以删除一个本地标签；
+命令git push origin :refs/tags/<tagname>可以删除一个远程标签。
 
 
-
+在GitHub上，可以任意Fork开源仓库；
+自己拥有Fork后的仓库的读写权限；
+可以推送pull request给官方仓库来贡献代码。
 
 
 
