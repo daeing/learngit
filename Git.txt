@@ -1,0 +1,109 @@
+git init
+	这样这个文件夹默认创建了一个.git的文件，就可以监督这个文件
+
+接下来就可以创建一个文件，例readme.txt。书写好内容之后就可以在命令行输入
+git add readme.txt
+	将它添加到了队列，可以加很多文件，然后一次性提交
+git commit -m "information"
+	提交到仓库。将队列中所有add的提交
+
+当你的文件修改后，
+git status
+	查看当前仓库中文件的状态
+git diff readme.txt
+	查看修改后与之前的区别点
+git commit -m "new information"
+
+git log 
+	查看修改几次，并且查看每一次的修改信息
+
+git log --pretty=oneline
+	可以查看每次修改的版本号，方便我们前往具体的版本号。
+
+例如 git reset --hard HEAD^ 
+	可以前往上一个版本，^的个数表示上几个版本。
+
+如果想退回去可以使用 git reset --hard 版本号
+	可以退回到指定的版本，
+
+如果之前一直没有查版本号，又突然退回了，又想回到最新版本
+可以使用 git reflog 查看所有信息的版本与版本号。在采用git reset --hard 版本号前往
+
+git add 和 git commit的具体关系可以查看git_add_commit.jpg
+git commit 提交的是add过的，有的时候尽管你add后又有修改，commit永远都是add的那份。
+
+当你发现你修改一份文件，保存后发现这个文件的逻辑不存在，或者犯了至关重要的错误。
+想要撤回，但是不想留下git status给别人查看嘲讽时，使用git checkout --readme.txt
+这样就把工作区的修改全部撤销：
+总之，这个操作就是让这个文件回到最近一次git commit或git add时的状态。
+
+同样面对上面的情况，如果说你add了，但是没有提交。就是将修改放入缓存去了。想要撤回
+先使用git reset HEAD 版本号 可以把暂存区的修改撤销掉。重新放回工作区。在使用git
+ checkout -readme.txt
+
+我们可以每次讲文件先add到工作区，反正可以神不知鬼不觉的修改（如上）。
+这样放置我们误删了文件。如果创建了一个test.txt的文件，然后将其删除了
+1. 就是想要删除，这时我们需要将工作区的备份处理掉使用
+	git rm test.txt   然后提交   git commit -m "information"
+2. 误删了，这时我们可以使用上面学过的命令
+	git checkout --test.txt 这样这个文件就可以恢复了。
+
+
+学习了这么多之后需要学习如何将本地仓库和远程github仓库连接起来啊。
+首先需要注册一个github账号，已经注册了。注意账号id是daeing密码是常用密码。
+然后需要注意在你的电脑上面创建一个sshkey，这样就可以在本地和远程仓库进行通信了。
+不同的电脑都可以和远程仓库进行通信哦。
+如何创建sshkey呢？
+右键，git bash。
+然后ssh-keygen -t rsa -C "1551178638@qq.com"
+这样在你的c盘，user目录下administor下的.ssh文件夹下就会有id_rsa和in_rsa.pub两个
+文件。前一个是秘钥，不能泄露的。后一个是公钥，复制里面的内容，然后到github账户
+上添加ssh key就可以使本地和远程仓库进行通话了。
+
+添加远程仓库，现在github上创建一个仓库，然后将本地同步过去即可。
+如  git remote add origin git@github.com:daeing/learngit.git
+git push -u origin master
+从现在起，只要本地作了提交，就可以通过命令：
+git push origin master
+
+有的时候可能会出错，这个是因为 github远程仓库中的readme.md文件不在本地仓库中，
+解决方法：1 git push -f   2. git pull --rebase origin master
+
+从远端仓库clone到本地
+上面谈论到的是从本地库添加到远程库。那么是否可以从远程库上clone到本地库了？
+是可以的。我们可以现在github上面创建一个新的仓库，例如gitskills，
+创建时勾选initialize this repository with a README，这样github会自动为我们
+创建一个README.md文件，创建完毕之后，我们可以看到README.md文件：
+这样远程库就准备好了。下一步就是命令git clone克隆一个本地库。
+git clone git@github.com:daeing/gitskills.git，这样你的目录就会多了一个
+gitskills目录，已经有README.md文件了。
+
+分支！
+假设你准备开发一个新功能，但是需要两周才能完成，第一周你写了50%的代码，
+如果立刻提交，由于代码还没写完，不完整的代码库会导致别人不能干活了。
+如果等代码全部写完再一次提交，又存在丢失每天进度的巨大风险。
+
+现在有了分支，就不用怕了。你创建了一个属于你自己的分支，别人看不到，
+还继续在原来的分支上正常工作，而你在自己的分支上干活，想提交就提交，
+直到开发完毕后，再一次性合并到原来的分支上，这样，既安全，又不影响别人工作。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
